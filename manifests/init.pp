@@ -8,9 +8,7 @@
 #
 # @param config_dir Directory to place kubeadm configuration files in.
 #
-# @param config_defaults Configuration defaults hash. Gets merged with config_hash.
-#
-# @param config_hash Use this to populate the JSON config file for kubeadm.
+# @param config Use this to populate the JSON config file for kubeadm.
 #
 # @param kubectl_package_ensure The version of kubectl to install.
 #
@@ -58,7 +56,7 @@
 #
 class kubeadm (
   $config_dir                     = $kubeadm::params::config_dir,
-  Array $config                   = $kubeadm::params::config
+  Array $config                   = $kubeadm::params::config,
   $kubectl_package_name           = $kubeadm::params::kubectl_package_name,
   $kubelet_package_name           = $kubeadm::params::kubelet_package_name,
   $kubectl_package_ensure         = $kubeadm::params::kubectl_package_ensure,
