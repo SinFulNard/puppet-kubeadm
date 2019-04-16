@@ -5,8 +5,7 @@
 #
 class kubeadm::params {
   $config_dir             = '/etc/kubeadm'
-  $config_defaults        = { 'kind' => 'MasterConfiguration', 'apiVersion' => 'kubeadm.k8s.io/v1alpha1' }
-  $config_hash            = {}
+  $config                 = []
   $kubectl_package_name   = 'kubelet'
   $kubelet_package_name   = 'kubectl'
   $kubectl_package_ensure = 'latest'
