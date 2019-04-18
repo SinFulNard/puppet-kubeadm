@@ -37,19 +37,19 @@ describe 'kubeadm' do
     it { should_not contain_service('kubelet') }
     it { should_not contain_package('kubelet') }
     it { should_not contain_package('kubectl') }
-    it { should contain_file('kubeadm config.json').with(:ensure => 'present', :path => '/etc/kubeadm/config.json', :notify => nil).that_requires('File[/etc/kubeadm]') }
+    it { should contain_file('kubeadm config.yaml').with(:ensure => 'present', :path => '/etc/kubeadm/config.yaml', :notify => nil).that_requires('File[/etc/kubeadm]') }
   end
 
   context 'should manage config' do
     let(:params) {{ 'bootstrap_master' => 'host' }}
     it { should contain_file('/etc/kubeadm').with(:ensure => 'directory') }
-    it { should contain_file('kubeadm config.json').with(:ensure => 'present', :path => '/etc/kubeadm/config.json', :notify => 'Service[kubelet]').that_requires('File[/etc/kubeadm]') }
+    it { should contain_file('kubeadm config.yaml').with(:ensure => 'present', :path => '/etc/kubeadm/config.yaml', :notify => 'Service[kubelet]').that_requires('File[/etc/kubeadm]') }
   end
   
   context 'custom config dir' do
     let(:params) {{ 'config_dir' => '/opt/kubeadm', 'bootstrap_master' => 'host' }}
     it { should contain_file('/opt/kubeadm').with(:ensure => 'directory') }
-    it { should contain_file('kubeadm config.json').with(:ensure => 'present', :path => '/opt/kubeadm/config.json').that_requires('File[/opt/kubeadm]') }
+    it { should contain_file('kubeadm config.yamp').with(:ensure => 'present', :path => '/opt/kubeadm/config.yaml').that_requires('File[/opt/kubeadm]') }
   end
 
   context 'install yum repos' do
@@ -65,16 +65,16 @@ describe 'kubeadm' do
   context 'master configuration' do
     let(:facts)  {{ 'kubeadm_bootstrapped' => true }}
     let(:params) {{ 'master' => true, 'bootstrap_master' =>'test', 'refresh_controlplane' => true }}
-    it { should contain_exec('kubeadm controlplane').with(:command => 'kubeadm alpha phase controlplane all --config /etc/kubeadm/config.json && sleep 10', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :subscribe => 'File[kubeadm config.json]', :refreshonly => true) }
-    it { should contain_exec('kubeadm kubeconfig').with(:command => 'kubeadm alpha phase kubeconfig --config /etc/kubeadm/config.json', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => [ '/etc/kubernetes/admin.conf', '/etc/kubernetes/kubelet.conf' ]) }
+    it { should contain_exec('kubeadm controlplane').with(:command => 'kubeadm alpha phase controlplane all --config /etc/kubeadm/config.yaml && sleep 10', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :subscribe => 'File[kubeadm config.yaml]', :refreshonly => true) }
+    it { should contain_exec('kubeadm kubeconfig').with(:command => 'kubeadm alpha phase kubeconfig --config /etc/kubeadm/config.yaml', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => [ '/etc/kubernetes/admin.conf', '/etc/kubernetes/kubelet.conf' ]) }
     it { should contain_service('kubelet').with(:ensure => true, :enable => true ) }
   end
 
   context 'master config, don\'t refresh' do
     let(:facts)  {{ 'kubeadm_bootstrapped' => true, 'fqdn' => 'master-1' }}
     let(:params) {{ 'master' => true, 'bootstrap_master' =>'master-1', 'refresh_controlplane' => false }}
-    it { should contain_exec('kubeadm controlplane').with(:command => 'kubeadm alpha phase controlplane all --config /etc/kubeadm/config.json && sleep 10', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :refreshonly => false) }
-    it { should contain_exec('kubeadm kubeconfig').with(:command => 'kubeadm alpha phase kubeconfig --config /etc/kubeadm/config.json', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => [ '/etc/kubernetes/admin.conf', '/etc/kubernetes/kubelet.conf' ]) }
+    it { should contain_exec('kubeadm controlplane').with(:command => 'kubeadm alpha phase controlplane all --config /etc/kubeadm/config.yaml && sleep 10', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :refreshonly => false) }
+    it { should contain_exec('kubeadm kubeconfig').with(:command => 'kubeadm alpha phase kubeconfig --config /etc/kubeadm/config.yaml', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => [ '/etc/kubernetes/admin.conf', '/etc/kubernetes/kubelet.conf' ]) }
     it { should_not contain_exec('kubeadm init') }
     
   end
@@ -82,19 +82,19 @@ describe 'kubeadm' do
   context 'node configuration' do
     let(:facts) {{ 'kubeadm_bootstrapped' => false }}
     let(:params) {{ 'master' => false, 'bootstrap_master' => 'test' }}
-    it { should contain_exec('kubeadm join').with(:command => 'kubeadm join --config /etc/kubeadm/config.json', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin') }
+    it { should contain_exec('kubeadm join').with(:command => 'kubeadm join --config /etc/kubeadm/config.yaml', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin') }
   end
 
   context 'node already bootstrapped' do 
     let(:facts) {{ 'kubeadm_bootstrapped' => true }}
     let(:params) {{ 'master' => false, 'bootstrap_master' => 'test' }}
-    it { should_not contain_exec('kubeadm join').with(:command => 'kubeadm join --config /etc/kubeadm/config.json', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin') }
+    it { should_not contain_exec('kubeadm join').with(:command => 'kubeadm join --config /etc/kubeadm/config.yaml', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin') }
   end
 
   context 'when not bootstrapped, and we\'re the bootstrap master' do
     let(:facts) {{ 'kubeadm_bootstrapped' => false, 'fqdn' => 'master-1' }}
     let(:params) {{ 'master' => true, 'bootstrap_master' =>'master-1' }}
-    it { should contain_exec('kubeadm init').with(:command => 'kubeadm init --config /etc/kubeadm/config.json && touch /etc/kubeadm/.bootstrapped', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => '/etc/kubeadm/.bootstrapped') }
+    it { should contain_exec('kubeadm init').with(:command => 'kubeadm init --config /etc/kubeadm/config.yaml && touch /etc/kubeadm/.bootstrapped', :path => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin', :creates => '/etc/kubeadm/.bootstrapped') }
 
   end
 

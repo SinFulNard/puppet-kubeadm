@@ -199,7 +199,7 @@ class kubeadm::master (
 ){
 
   $subscribe = $refresh_controlplane ? {
-    true    =&gt; File[&#39;kubeadm config.json&#39;],
+    true    =&gt; File[&#39;kubeadm config.yaml&#39;],
     default =&gt; undef,
   }
 

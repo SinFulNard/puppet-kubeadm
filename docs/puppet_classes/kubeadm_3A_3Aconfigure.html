@@ -176,7 +176,7 @@ class kubeadm::configure(
     purge   =&gt; $purge,
     recurse =&gt; $purge,
   }
-  -&gt; file { &#39;kubeadm config.json&#39;:
+  -&gt; file { &#39;kubeadm config.yaml&#39;:
     ensure  =&gt; present,
     path    =&gt; &quot;${kubeadm::config_dir}/config.json&quot;,
     content =&gt; kubeadm_sorted_json($config_hash, $::kubeadm::pretty_config, $::kubeadm::pretty_config_indent),

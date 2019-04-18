@@ -14,7 +14,7 @@ class kubeadm::configure(
   $replace = true,
   $ensure  = 'present',
 ) {
-  $config_yaml = $config.reduce('') |$result, $kind| { $result + $kind.to_yaml }
+  $config_yaml = $config.reduce('') |$memo, $value| {"${memo} ${to_yaml($value)}"}
 
   file {$::kubeadm::config_dir:
     ensure  => directory,
