@@ -82,14 +82,14 @@ class kubeadm (
   class {'::kubeadm::repos':
     manage_repos => $manage_repos
   }
-  #-> class {'::kubeadm::install': }
+  -> class {'::kubeadm::install': }
   -> class {'::kubeadm::configure':
     config      => $config,
     purge       => $purge_config_dir,
     replace     => $replace_kubeadm_config,
     ensure      => $kubeadm_config_ensure,
   }
-  /*-> class {'::kubeadm::service': }
+  -> class {'::kubeadm::service': }
 
   if $master {
     Class['::kubeadm::service']
@@ -108,10 +108,10 @@ class kubeadm (
     Class['kubeadm::service']
     -> Class['kubeadm::node']
   }
-*/
+
   contain ::kubeadm::repos
-  #contain ::kubeadm::install
+  contain ::kubeadm::install
   contain ::kubeadm::configure
-  #contain ::kubeadm::service
+  contain ::kubeadm::service
 
 }
