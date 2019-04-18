@@ -8,7 +8,7 @@ class kubeadm::node(
   # if the bootstrapped fact isn't set
   # join the cluster
   $flags = kubeadm_flags({
-    config                  => "${::kubeadm::config_dir}/config.json",
+    config                  => "${::kubeadm::config_dir}/config.yaml",
     ignore_preflight_errors => $ignore_preflight_errors,
   })
   if ! $::kubeadm_bootstrapped {

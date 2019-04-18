@@ -167,7 +167,7 @@ class kubeadm::configure(
   }
   -&gt; file { &#39;kubeadm config.yaml&#39;:
     ensure  =&gt; present,
-    path    =&gt; &quot;${kubeadm::config_dir}/config.json&quot;,
+    path    =&gt; &quot;${kubeadm::config_dir}/config.yaml&quot;,
     content =&gt; kubeadm_sorted_json($config_hash, $::kubeadm::pretty_config, $::kubeadm::pretty_config_indent),
     require =&gt; File[$::kubeadm::config_dir],
   }

@@ -14,7 +14,7 @@ class kubeadm::master (
 
   # if we are a master, install the components we need to update the controlplane
   # every time the config file changes
-  $controlplane_cmd = "kubeadm alpha phase controlplane all --config ${::kubeadm::config_dir}/config.json && sleep 10"
+  $controlplane_cmd = "kubeadm alpha phase controlplane all --config ${::kubeadm::config_dir}/config.yaml && sleep 10"
   exec { 'kubeadm controlplane':
     command     => $controlplane_cmd,
     path        => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin',
@@ -22,13 +22,13 @@ class kubeadm::master (
     refreshonly => true,
   }
   ~> exec { 'kubeadm kubeconfig':
-    command     => "kubeadm alpha phase kubeconfig all --config ${kubeadm::config_dir}/config.json",
+    command     => "kubeadm alpha phase kubeconfig all --config ${kubeadm::config_dir}/config.yaml",
     path        => '/usr/bin:/usr/local/bin:/usr/sbin:/sbin',
     refreshonly => true,
   }
 
   $flags = kubeadm_flags({
-    config                  => "${::kubeadm::config_dir}/config.json",
+    config                  => "${::kubeadm::config_dir}/config.yaml",
     ignore_preflight_errors => $ignore_preflight_errors,
   })
 

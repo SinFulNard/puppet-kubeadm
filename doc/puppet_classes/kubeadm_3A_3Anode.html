@@ -113,7 +113,7 @@ class kubeadm::node {
   # join the cluster
   if ! $::kubeadm_bootstrapped {
     exec { &#39;kubeadm join&#39;:
-      command =&gt; &quot;kubeadm join --config ${kubeadm::config_dir}/config.json&quot;,
+      command =&gt; &quot;kubeadm join --config ${kubeadm::config_dir}/config.yaml&quot;,
       path    =&gt; &#39;/usr/bin:/usr/local/bin:/usr/sbin:/sbin&#39;,
     }
   }

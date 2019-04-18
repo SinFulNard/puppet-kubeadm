@@ -207,7 +207,7 @@ class kubeadm::master (
 
     if ! $::kubeadm_bootstrapped and $bootstrap_master == $::fqdn {
       exec { &#39;kubeadm init&#39;:
-        command =&gt; &quot;kubeadm init --config ${kubeadm::config_dir}/config.json &amp;&amp; touch ${kubeadm::config_dir}/.bootstrapped&quot;,
+        command =&gt; &quot;kubeadm init --config ${kubeadm::config_dir}/config.yaml &amp;&amp; touch ${kubeadm::config_dir}/.bootstrapped&quot;,
         path    =&gt; &#39;/usr/bin:/usr/local/bin:/usr/sbin:/sbin&#39;,
         require =&gt; Package[&#39;kubeadm&#39;],
         creates =&gt; &quot;${kubeadm::config_dir}/.bootstrapped&quot;,
@@ -217,14 +217,14 @@ class kubeadm::master (
     # if we are a master, install the components we need to update the controlplane
     # every time the config file changes
     exec { &#39;kubeadm controlplane&#39;:
-      command     =&gt; &quot;kubeadm alpha phase controlplane all --config ${kubeadm::config_dir}/config.json &amp;&amp; sleep 10&quot;, # this is to ensure the controlplane returns
+      command     =&gt; &quot;kubeadm alpha phase controlplane all --config ${kubeadm::config_dir}/config.yaml &amp;&amp; sleep 10&quot;, # this is to ensure the controlplane returns
       path        =&gt; &#39;/usr/bin:/usr/local/bin:/usr/sbin:/sbin&#39;,
       subscribe   =&gt; $subscribe,
       require     =&gt; Package[&#39;kubeadm&#39;],
       refreshonly =&gt; $refresh_controlplane,
     }
     -&gt; exec { &#39;kubeadm kubeconfig&#39;:
-      command =&gt; &quot;kubeadm alpha phase kubeconfig --config ${kubeadm::config_dir}/config.json&quot;,
+      command =&gt; &quot;kubeadm alpha phase kubeconfig --config ${kubeadm::config_dir}/config.yaml&quot;,
       path    =&gt; &#39;/usr/bin:/usr/local/bin:/usr/sbin:/sbin&#39;,
       require =&gt; Package[&#39;kubeadm&#39;],
       creates =&gt; [ &#39;/etc/kubernetes/admin.conf&#39;, &#39;/etc/kubernetes/kubelet.conf&#39; ],
